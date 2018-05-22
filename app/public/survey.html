@@ -47,22 +47,22 @@
 		<h4>You consider yourself suave.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q3">
 	 		<option value=""></option>
-      <option value="1">1 (Never)</option>
+      <option value="1">1 (Strongly Disagree)</option>
       <option value="2">2</option>
       <option value="3">3</option>
       <option value="4">4</option>
-      <option value="5">5 (Always)</option>
+      <option value="5">5 (Strongly Agree)</option>
     </select>
     <hr>
     
     <h4>You prefer foods with GMOs.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q4">
 	 		<option value=""></option>
-      <option value="1">1 (Never)</option>
+      <option value="1">1 (Strongly Disagree)</option>
       <option value="2">2</option>
       <option value="3">3</option>
       <option value="4">4</option>
-      <option value="5">5 (Always)</option>
+      <option value="5">5 (Strongly Agree)</option>
     </select>
     <hr>
 
@@ -80,22 +80,22 @@
 		<h4>You enjoy long walks on the beach.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q6">
 	 		<option value=""></option>
-      <option value="1">1 (Never)</option>
+      <option value="1">1 (Strongly Disagree)</option>
       <option value="2">2</option>
       <option value="3">3</option>
       <option value="4">4</option>
-      <option value="5">5 (Always)</option>
+      <option value="5">5 (Strongly Agree)</option>
     </select>
     <hr>
     
     <h4>You think beyonce had one of the best videos of all time.</h4>
 	 	<select data-placeholder="" class="chosen-select" id="q7">
 	 		<option value=""></option>
-      <option value="1">1 (Bad)</option>
+      <option value="1">1 (Strongly Disagree)</option>
       <option value="2">2</option>
       <option value="3">3</option>
       <option value="4">4</option>
-      <option value="5">5 (Good)</option>
+      <option value="5">5 (Strongly Agree)</option>
     </select>
     <hr>
     
@@ -218,51 +218,50 @@
             ]
             };
 
-        //AJAX post the data to the friends API
+        // AJAX post the data to the friends API
           $.post("/api", newFriend)
           .done(function(data) {
             console.log(data);
           });
-            //get the friend array from the api to do the match logic w/
+            // get friends array
             $.get("/api", function (req, res){
               console.log(req);
               console.log(res);
 
               function getMatch(newFriend, req) {
-              //best score is the best score number from my friend array
-              var bestScore = 33;
+              // best score is the best score number from my friend array
+              var bestScore = 50;
               var currScoreArray = [];
-              var currScore = 0;
+              var currentScore = 0;
               var match;
               var friends = req;
 
               console.log(friends);
-              // ensures newFriend isn't matched to themselves
-              // then then adds up the scores and subtracts them from the
-              //friends scores in a loop
+      
               for (var i = 0; i < friends.length; i++) {
+                // make sure newFriend doesn't get matched with themselves
                 if (newFriend.name !== friends[i].name) {
-                  //currScore = 0;
+                  currentScore = 0;
                   for (var j = 0; j < friends[i].score.length; j++) {
-                    currScore += Math.abs(newFriend.score[j] - friends[i].score[j]);
+                    // calc total difference between newFriend array and each friend in friends array
+                    currentScore += Math.abs(newFriend.score[j] - friends[i].score[j]);
                   }
-                  if (currScore < bestScore) {
-                    bestScore = currScore;
+                  if (currentScore < bestScore) {
+                    // update bestscore if last calculated score is better than previous
+                    bestScore = currentScore;
                     console.log(bestScore);
+                    // update their match if current friend in array has better score
                     match = friends[i];
                     console.log(match);
                   }
                 }
               }
 
-                //displays the modal for the match!
                 $("#matchName").text("Your new friend is: " + match.name);
                 $('#matchImg').attr("src", match.pic);
-                // Show the modal with the best match 
                 $("#resultsModal").modal('toggle');
               }
 
-            //calling the match function
             getMatch(newFriend, req);
           });
                 
